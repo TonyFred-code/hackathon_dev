@@ -1,0 +1,6 @@
+
+backend/backend/__pycache__/*
+backend/api/migrations/*
+
+backend/api/migrations/__pycache__/*
+
