@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "name": "Mathematics",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  },
+
+  {
+    "id": 2,
+    "name": "English Language",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  },
+
+  {
+    "id": 3,
+    "name": "Basic Science",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  },
+
+  {
+    "id": 4,
+    "name": "Mathematics",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  },
+
+  {
+    "id": 5,
+    "name": "Mathematics",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  },
+
+  {
+    "id": 6,
+    "name": "Mathematics",
+    "teacher": "Mr. Adebayo",
+    "class_id": 1
+  }
+]
