@@ -44,12 +44,7 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-    @property
-    def attendance_record(self):
-        # Retrieve related attendance records for the student
-        return self.attendances.values_list('status', flat=True)
-
-
+     
     # @property
     # def current_grades(self):
     #     return self.grades.all().values('subject__name', 'grade')
