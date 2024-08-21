@@ -103,6 +103,7 @@ export default function StudentsList({
 
   if (selectedStudentId !== null) {
     [selectedStudent] = selectedStudentData();
+    console.log(selectedStudent);
   }
 
   const rows = student_list.map((student) => {
@@ -196,12 +197,15 @@ export default function StudentsList({
                 </Box>
               ) : (
                 <Paper style={{ padding: 16 }}>
-                  <h2>{selectedStudent.fullName}&apos;s Details</h2>
+                  <h2>
+                    {selectedStudent.first_name} {selectedStudent.last_name}
+                    &apos;s Details
+                  </h2>
                   <p>
                     <strong>Gender:</strong> {selectedStudent.gender}
                   </p>
                   <p>
-                    <strong>Email Address:</strong>{' '}
+                    <strong>Email Address:</strong>
                     {selectedStudent.emailAddress}
                   </p>
                   {/* Add more details as necessary */}
