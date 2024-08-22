@@ -4,19 +4,19 @@ from .models import Student, Teacher, Attendance, Class, Subject, Grade
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = ['id', 'name']  # Added 'id' to uniquely identify the class
+        fields = ['id', 'name']  
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ['name']  # Added 'id' for unique identification
+        fields = ['name']  
 
 class GradeSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()  # Nested SubjectSerializer to include subject details
 
     class Meta:
         model = Grade
-        fields = ['subject', 'value']  # Show subject and grade
+        fields = ['subject', 'value']  
 
 class StudentSerializer(serializers.ModelSerializer):
     class_id = ClassSerializer()  
@@ -30,4 +30,4 @@ class StudentSerializer(serializers.ModelSerializer):
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = '__all__'  # Serialize all fields for Teacher
+        fields = '__all__'  
