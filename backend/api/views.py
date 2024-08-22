@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from .serializers import StudentSerializer,TeacherSerializer
 
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'POST'])
 def student_list(request):
     instance = Student.objects.all()
 
@@ -16,8 +16,8 @@ def student_list(request):
         serializer = StudentSerializer(instance, many=True)
         return Response({'student': serializer.data}, status=status.HTTP_200_OK)
 
-    elif request.method == 'PUT':
-            serializer =StudentSerializer(instance, data = request.data)
+    elif request.method == 'POST':
+            serializer =StudentSerializer( data = request.data)
 
             if serializer.is_valid():
                 serializer.save()
@@ -26,7 +26,7 @@ def student_list(request):
             return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'PUT'])
 def student_id(request, id):
 
     try:
