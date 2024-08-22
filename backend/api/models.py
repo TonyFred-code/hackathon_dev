@@ -38,9 +38,9 @@ class Student(models.Model):
     email = models.EmailField(blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     date_of_birth = models.DateField()
+    parent_contact_info= models.EmailField(null=True)
     class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_class')
     subjects = models.ManyToManyField('Subject', through='Grade')
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
