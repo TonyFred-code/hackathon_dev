@@ -28,11 +28,11 @@ class GradeSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     class_id = ClassSerializer()  
     
-    grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
+    current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
 
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'date_of_birth', 'class_id', 'grades']  # Include fields for serialization
+        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'date_of_birth', 'class_id', 'current_grades', 'parent_contact_info']  # Include fields for serialization
 
     def update(self, instance, validated_data):
         print('validated_data = ', validated_data)
