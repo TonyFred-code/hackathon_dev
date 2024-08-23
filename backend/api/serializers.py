@@ -3,9 +3,11 @@ from .models import Student, Attendance, Class, Subject, Grade, Admin
 
 # Admin Serializer
 class AdminSerializer(serializers.ModelSerializer):
+    assigned_class = serializers.StringRelatedField()
     class Meta:
         model = Admin
-        fields = ['name']
+        fields = ['name', 'is_class_teacher', 'assigned_class']
+
 
 # Subject Serializer
 class SubjectSerializer(serializers.ModelSerializer):
@@ -44,14 +46,21 @@ class GradeSerializer(serializers.ModelSerializer):
         model = Grade
         fields = ['subject', 'value']
 
+class AttendanceSerializer(serializers.ModelSerializer):
+    student  = serializers.StringRelatedField()
+    class Meta:
+        model = Attendance
+        fields = ['student', 'date', 'status']
+
+
 # Student Serializer
 class StudentSerializer(serializers.ModelSerializer):
     class_id = serializers.StringRelatedField()  # Display class name as string
     current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
-
+    attendance = AttendanceSerializer()
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'date_of_birth', 'class_id', 'current_grades', 'parent_contact_info']
+        fields = ['id', 'first_name', 'last_name', 'email','attendance', 'gender', 'date_of_birth', 'class_id', 'current_grades', 'parent_contact_info']
 
     def update(self, instance, validated_data):
         # Update class_id (Class model)
@@ -75,6 +84,10 @@ class StudentSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+    
+
+
+
 
 # Class Serializer with Nested Serializers
 class ClassSerializer(serializers.ModelSerializer):

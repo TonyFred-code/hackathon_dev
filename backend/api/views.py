@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .models import  Student, Grade, Attendance, Subject, Class
+from .models import  Student, Grade, Attendance, Subject, Class, Admin
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
-from .serializers import StudentSerializer, SubjectSerializer, ClassSerializer
+from .serializers import StudentSerializer, AttendanceSerializer,AdminSerializer, SubjectSerializer, ClassSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -102,3 +102,38 @@ def class_detail(request, pk):
     elif request.method == 'DELETE':
         class_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'POST'])
+def admin(request):
+    if request.method == 'GET':
+        admin = Admin.objects.all()
+        serializer = AdminSerializer(admin, many=True)
+        return Response({'admin': serializer.data }, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+            serializer =AdminSerializer( data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'success': serializer.data}, status=status.HTTP_200_OK)
+                
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def attendance_list(request):
+ 
+    if request.method == 'GET':
+        attendance = Attendance.objects.all()
+        serializer = AttendanceSerializer(attendance, many=True)
+        return Response({'attendance': serializer.data }, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer =AttendanceSerializer( data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'success': serializer.data}, status=status.HTTP_200_OK)
+            
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+

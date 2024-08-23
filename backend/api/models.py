@@ -58,6 +58,7 @@ class Student(models.Model):
     parent_contact_info= models.EmailField(null=True)
     class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_class')
     subjects = models.ManyToManyField('Subject', through='Grade')
+    attendance = models.ForeignKey("Attendance",null=True, blank=True, related_name='student_attendance', on_delete=models.SET_NULL)
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -83,7 +84,7 @@ class Attendance(models.Model):
     ]
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances', null=True)
     date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=10)
 
     def __str__(self):
         return f"{self.student.first_name} - {self.date}"
