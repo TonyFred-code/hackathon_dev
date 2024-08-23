@@ -1,13 +1,15 @@
 from django.db import models
 
-class Teacher(models.Model):
-    full_name = models.CharField(max_length=300)
-    email = models.EmailField(unique=True)
-    sex = models.CharField(max_length=100)
-    subject = models.CharField(max_length=300)
 
-    def __str__(self):
-        return f"{self.full_name} {self.email}"
+
+# class Teacher(models.Model):
+#     full_name = models.CharField(max_length=300)
+#     email = models.EmailField(unique=True)
+#     sex = models.CharField(max_length=100)
+#     subject = models.CharField(max_length=300)
+
+#     def __str__(self):
+#         return f"{self.full_name} {self.email}"
 
 class Class(models.Model):
     name = models.CharField(max_length=200)
@@ -16,11 +18,18 @@ class Class(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+class Admin(models.Model):
+    name = models.CharField(max_length=200)
+    is_class_teacher = models.BooleanField(default=False)
+    assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
+    subjects = models.ManyToManyField("Subject", related_name='teachers')
+
 
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
-    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True, related_name='student_subject')
+    teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, null=True, related_name='subject_teacher')
     class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
 
     def __str__(self):
@@ -51,7 +60,7 @@ class Student(models.Model):
 
 
 class Grade(models.Model):
-    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='grades')  # Added related_name
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='current_grades')  # Added related_name
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
     value = models.PositiveIntegerField()
 
