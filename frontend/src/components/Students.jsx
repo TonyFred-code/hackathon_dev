@@ -99,6 +99,7 @@ export default function StudentsList({
   student_list,
   onStudentCreate,
   class_list,
+  onStudentDetailsEdit,
 }) {
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [createStudentModalOpen, setCreateStudentModalOpen] = useState(false);
@@ -136,6 +137,21 @@ export default function StudentsList({
     };
 
     onStudentCreate(studentData);
+  }
+
+  function handleEditStudent(e, studentId) {
+    const { elements } = e.target;
+
+    const studentData = {
+      first_name: elements.first_name.value,
+      last_name: elements.last_name.value,
+      emailAddress: elements.emailAddress.value,
+      gender: elements.gender.value,
+      date_of_birth: elements.date_of_birth.value,
+      id: studentId,
+    };
+
+    onStudentDetailsEdit(studentData);
   }
 
   let selectedStudent;
@@ -491,7 +507,8 @@ export default function StudentsList({
             sx={modalStyle}
             onSubmit={(e) => {
               e.preventDefault();
-              handleCreateStudent(e);
+              setEditStudent(false);
+              handleEditStudent(e, selectedStudentId);
             }}
           >
             <Typography
@@ -581,7 +598,7 @@ export default function StudentsList({
                 Cancel
               </Button>
               <Button type='submit' variant='contained' color='primary'>
-                Create Student
+                Update Details
               </Button>
             </ButtonGroup>
           </Box>

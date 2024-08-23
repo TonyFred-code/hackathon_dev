@@ -158,6 +158,21 @@ function App() {
     console.log(gradeData);
   }
 
+  function handleStudentDetailsEdit(studentData) {
+    const { id } = studentData;
+
+    const [student] = studentsList.filter((st) => st.id === id);
+
+    const updatedStudent = {
+      ...student,
+      ...studentData,
+    };
+
+    const updatedStudentsList = studentsList.filter((st) => st.id !== id);
+
+    setStudentsList([...updatedStudentsList, updatedStudent]);
+  }
+
   function handleStudentCreate(studentData) {
     const indexes = [];
 
@@ -350,6 +365,7 @@ function App() {
             student_list={studentsList}
             onStudentCreate={handleStudentCreate}
             class_list={classList}
+            onStudentDetailsEdit={handleStudentDetailsEdit}
           />
         )}
         {activeTab.subjects && (
