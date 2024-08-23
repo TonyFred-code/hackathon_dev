@@ -23,13 +23,13 @@ class Admin(models.Model):
     name = models.CharField(max_length=200)
     is_class_teacher = models.BooleanField(default=False)
     assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
-    subjects = models.ManyToManyField("Subject", related_name='teachers')
+    # subjects = models.ManyToManyField("Subject",null=True, blank=True,  related_name='teachers')
 
 
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
-    teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, null=True, related_name='subject_teacher')
+    teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
     class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
 
     def __str__(self):

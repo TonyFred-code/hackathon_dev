@@ -11,6 +11,8 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Subject
         fields = ['name']  
 
+
+
 class GradeSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()  # Nested SubjectSerializer to include subject details
 
