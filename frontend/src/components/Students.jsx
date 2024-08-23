@@ -20,11 +20,20 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
+  ButtonGroup,
+  Tabs,
+  Tab,
 } from '@mui/material';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { ThemeProvider } from '@emotion/react';
 
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,6 +70,29 @@ const modalStyle = {
   gap: 4,
 };
 
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 const defaultTheme = createTheme();
 
 export default function StudentsList({
@@ -70,6 +102,12 @@ export default function StudentsList({
 }) {
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [createStudentModalOpen, setCreateStudentModalOpen] = useState(false);
+  const [value, setValue] = useState(0);
+  const [editStudent, setEditStudent] = useState(false);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   function selectedStudentData() {
     return student_list.filter((student) => {
@@ -94,6 +132,7 @@ export default function StudentsList({
       last_name: elements.last_name.value,
       emailAddress: elements.emailAddress.value,
       gender: elements.gender.value,
+      date_of_birth: elements.date_of_birth.value,
     };
 
     onStudentCreate(studentData);
@@ -114,9 +153,11 @@ export default function StudentsList({
       return classD.students.includes(id);
     });
 
-    console.log(studentClass?.name);
+    let classNameVal = '-';
 
-    const classNameVal = studentClass?.name ? studentClass.name : 'class';
+    if (studentClass) {
+      classNameVal = studentClass.name;
+    }
 
     const fullName = `${last_name} ${first_name}`;
     return {
@@ -161,13 +202,8 @@ export default function StudentsList({
                       <TableHead>
                         <TableRow>
                           <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell align='right'>Class</StyledTableCell>
-                          <StyledTableCell align='right'>
-                            gender
-                          </StyledTableCell>
-                          <StyledTableCell align='right'>
-                            emailAddress&nbsp;(g)
-                          </StyledTableCell>
+                          <StyledTableCell>Class</StyledTableCell>
+                          <StyledTableCell>Gender</StyledTableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -175,7 +211,10 @@ export default function StudentsList({
                           <StyledTableRow
                             key={row.id}
                             onClick={() => setSelectedStudentId(row.id)}
-                            style={{ cursor: 'pointer' }}
+                            style={{
+                              cursor: 'pointer',
+                              textTransform: 'capitalize',
+                            }}
                           >
                             <StyledTableCell component='th' scope='row'>
                               {row.fullName}
@@ -183,12 +222,7 @@ export default function StudentsList({
                             <StyledTableCell component='th' scope='row'>
                               {row.classNameVal}
                             </StyledTableCell>
-                            <StyledTableCell align='right'>
-                              {row.gender}
-                            </StyledTableCell>
-                            <StyledTableCell align='right'>
-                              {row.emailAddress}
-                            </StyledTableCell>
+                            <StyledTableCell>{row.gender}</StyledTableCell>
                           </StyledTableRow>
                         ))}
                       </TableBody>
@@ -196,23 +230,154 @@ export default function StudentsList({
                   </TableContainer>
                 </Box>
               ) : (
-                <Paper style={{ padding: 16 }}>
-                  <h2>
-                    {selectedStudent.first_name} {selectedStudent.last_name}
-                    &apos;s Details
-                  </h2>
-                  <p>
-                    <strong>Gender:</strong> {selectedStudent.gender}
-                  </p>
-                  <p>
-                    <strong>Email Address:</strong>
-                    {selectedStudent.emailAddress}
-                  </p>
-                  {/* Add more details as necessary */}
-                  <Button variant='contained' onClick={handleBackClick}>
-                    Back to List
-                  </Button>
-                </Paper>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Box>
+                    <Button variant='contained' onClick={handleBackClick}>
+                      Back to List
+                    </Button>
+                    <Button
+                      variant='contained'
+                      onClick={() => {
+                        setEditStudent(true);
+                      }}
+                    >
+                      Edit Student
+                    </Button>
+                  </Box>
+                  <Paper style={{ padding: 16 }}>
+                    <h2>
+                      {selectedStudent.first_name} {selectedStudent.last_name}
+                      &apos;s Details
+                    </h2>
+                    <p>
+                      <strong>Gender:</strong> {selectedStudent.gender}
+                    </p>
+                    <p>
+                      <strong>Email Address:</strong>
+                      {selectedStudent.parent_contact_info}
+                    </p>
+                    {/* Add more details as necessary */}
+                  </Paper>
+                  <Box sx={{ width: '100%' }}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                      <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        aria-label='basic tabs example'
+                      >
+                        <Tab label='Student Bio' {...a11yProps(0)} />
+                        <Tab label='Item Two' {...a11yProps(1)} />
+                        <Tab label='Item Three' {...a11yProps(2)} />
+                      </Tabs>
+                    </Box>
+                    <CustomTabPanel value={value} index={0}>
+                      <Paper sx={{ p: 1 }}>
+                        <Typography
+                          variant='h6'
+                          sx={{
+                            mb: 1,
+                          }}
+                        >
+                          Student Profile
+                        </Typography>
+
+                        <Box>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              borderBottom: 2,
+                              borderColor: 'divider',
+                              p: 2,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                flex: 1,
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              First Name
+                            </Typography>
+                            <Typography>
+                              {selectedStudent.first_name}
+                            </Typography>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              borderBottom: 2,
+                              borderColor: 'divider',
+                              p: 2,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                flex: 1,
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              Last Name
+                            </Typography>
+                            <Typography>{selectedStudent.last_name}</Typography>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              borderBottom: 2,
+                              borderColor: 'divider',
+                              p: 2,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                flex: 1,
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              Email Address
+                            </Typography>
+                            <Typography>
+                              {selectedStudent.parent_contact_info}
+                            </Typography>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              borderBottom: 2,
+                              borderColor: 'divider',
+                              p: 2,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                flex: 1,
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              Date of Birth:
+                            </Typography>
+                            <Typography>
+                              {selectedStudent.date_of_birth}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={1}>
+                      Item Two
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={2}>
+                      Item Three
+                    </CustomTabPanel>
+                  </Box>
+                </Box>
               )}
             </Container>
           </Box>
@@ -267,6 +432,12 @@ export default function StudentsList({
             name='emailAddress'
           />
 
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker']}>
+              <DatePicker name='date_of_birth' label='Date of Birth' />
+            </DemoContainer>
+          </LocalizationProvider>
+
           <FormControl>
             <FormLabel id='demo-radio-buttons-group-label'>Gender</FormLabel>
             <RadioGroup
@@ -284,11 +455,138 @@ export default function StudentsList({
             </RadioGroup>
           </FormControl>
 
-          <Button type='submit' variant='contained' color='primary'>
-            Create Student
-          </Button>
+          <ButtonGroup
+            sx={{
+              gap: 3,
+              justifyContent: 'space-around',
+            }}
+          >
+            <Button
+              type='button'
+              variant='contained'
+              color='error'
+              onClick={() => {
+                setCreateStudentModalOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type='submit' variant='contained' color='primary'>
+              Create Student
+            </Button>
+          </ButtonGroup>
         </Box>
       </Modal>
+      {editStudent && (
+        <Modal
+          open={editStudent}
+          onClose={() => {
+            setEditStudent(false);
+          }}
+          aria-labelledby='modal-modal-title'
+          aria-describedby='modal-modal-description'
+        >
+          <Box
+            component='form'
+            sx={modalStyle}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateStudent(e);
+            }}
+          >
+            <Typography
+              id='modal-modal-title'
+              variant='h5'
+              sx={{ mb: 2 }}
+              component='h2'
+            >
+              Text in a modal
+            </Typography>
+            <TextField
+              required
+              id='outlined-basic'
+              label='Student First Name'
+              variant='outlined'
+              name='first_name'
+              defaultValue={selectedStudent && selectedStudent.first_name}
+            />
+
+            <TextField
+              required
+              id='outlined-basic'
+              label='Student Last Name'
+              variant='outlined'
+              name='last_name'
+              defaultValue={selectedStudent && selectedStudent.last_name}
+            />
+
+            <TextField
+              required
+              id='outlined-basic'
+              label='Email Address'
+              variant='outlined'
+              name='emailAddress'
+              defaultValue={
+                selectedStudent && selectedStudent.parent_contact_info
+              }
+            />
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker']}>
+                <DatePicker
+                  name='date_of_birth'
+                  label='Date of Birth'
+                  defaultValue={
+                    selectedStudent && dayjs(selectedStudent.date_of_birth)
+                  }
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+
+            <FormControl>
+              <FormLabel id='demo-radio-buttons-group-label'>Gender</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby='demo-radio-buttons-group-label'
+                defaultValue={selectedStudent && selectedStudent.gender}
+                name='gender'
+              >
+                <FormControlLabel
+                  value='female'
+                  control={<Radio />}
+                  label='Female'
+                />
+                <FormControlLabel
+                  value='male'
+                  control={<Radio />}
+                  label='Male'
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <ButtonGroup
+              sx={{
+                gap: 3,
+                justifyContent: 'space-around',
+              }}
+            >
+              <Button
+                type='button'
+                variant='contained'
+                color='error'
+                onClick={() => {
+                  setEditStudent(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type='submit' variant='contained' color='primary'>
+                Create Student
+              </Button>
+            </ButtonGroup>
+          </Box>
+        </Modal>
+      )}
     </>
   );
 }

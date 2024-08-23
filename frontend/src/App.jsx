@@ -32,10 +32,15 @@ import Dashboard from './components/Dashboard';
 
 import './App.css';
 
+import subjectData from '../data/subject.json';
 import studentData from '../data/students_list.json';
 import classData from '../data/class.json';
 import StudentsList from './components/Students';
 import Classes from './components/Classes';
+import attendanceData from '../data/attendance.json';
+import Subjects from './components/Subjects';
+import Attendance from './components/Attendance';
+import GradeBook from './components/GradeBook';
 
 const defaultTheme = createTheme();
 
@@ -86,10 +91,20 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 function App() {
-  const [dashboardOpen, setDashboardOpen] = useState(true);
-  const [studentsListOpen, setStudentListOpen] = useState(false);
-  const [openClasses, setOpenClasses] = useState(false);
+  const defaultTabs = {
+    dashboard: true,
+    subjects: false,
+    attendance: false,
+    classes: false,
+    grade_book: false,
+    students: false,
+  };
+
+  const [activeTab, setActiveTab] = useState(defaultTabs);
   const [studentsList, setStudentsList] = useState(studentData);
+  const [classList, setClassList] = useState(classData);
+  const [attendanceList, setAttendanceList] = useState(attendanceData);
+  const [subjectList, setSubjectList] = useState(subjectData);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -97,22 +112,50 @@ function App() {
     setDrawerOpen(!drawerOpen);
   };
 
-  function openDashBoard() {
-    setDashboardOpen(true);
-    setStudentListOpen(false);
-    setOpenClasses(false);
+  function openTab(tab) {
+    const keys = Object.keys(activeTab);
+
+    if (!keys.includes(tab)) {
+      setActiveTab(defaultTabs);
+      return;
+    }
+
+    const newActiveTabs = { ...activeTab };
+
+    keys.forEach((key) => {
+      if (key === tab) {
+        newActiveTabs[key] = true;
+      } else {
+        newActiveTabs[key] = false;
+      }
+    });
+
+    setActiveTab(newActiveTabs);
   }
 
-  function openStudentList() {
-    setDashboardOpen(false);
-    setStudentListOpen(true);
-    setOpenClasses(false);
+  function openDashBoardTab() {
+    openTab('dashboard');
   }
 
-  function openClassesTab() {
-    setDashboardOpen(false);
-    setStudentListOpen(false);
-    setOpenClasses(true);
+  function openAttendanceTab() {
+    openTab('attendance');
+  }
+
+  function openStudentListTab() {
+    openTab('students');
+  }
+
+  function openSubjectsTab() {
+    openTab('subjects');
+  }
+
+  function openGradeBookTab() {
+    openTab('grade_book');
+  }
+
+  function handleGradeBookUpdate(gradeData) {
+    setStudentsList(gradeData);
+    console.log(gradeData);
   }
 
   function handleStudentCreate(studentData) {
@@ -125,7 +168,8 @@ function App() {
     const maxIndex = Math.max(...indexes);
 
     const id = maxIndex + 1;
-    const { first_name, last_name, emailAddress, gender } = studentData;
+    const { first_name, last_name, emailAddress, gender, date_of_birth } =
+      studentData;
 
     const student = {
       id,
@@ -133,11 +177,59 @@ function App() {
       last_name,
       parent_contact_info: emailAddress,
       gender,
+      class_id: 1,
+      current_grades: [],
+      date_of_birth,
     };
+    const [classListData] = classList;
+
+    const updatedClassList = [
+      {
+        ...classListData,
+        students: [id, ...classListData.students],
+      },
+    ];
+    console.log(updatedClassList);
+    console.log(classList);
 
     setStudentsList([student, ...studentsList]);
+    setClassList(updatedClassList);
     console.log(studentData);
     console.log(id);
+  }
+
+  function handleSubjectCreate(subjectData) {
+    const indexes = [];
+
+    subjectList.forEach((s, index) => {
+      indexes.push(index + 1);
+    });
+
+    const maxIndex = Math.max(...indexes);
+
+    const id = maxIndex + 1;
+    const { name } = subjectData;
+
+    const newSubjectData = {
+      id,
+      name,
+      class_id: 1,
+      teacher_id: 1,
+    };
+
+    const [classListData] = classList;
+
+    const updatedClassList = [
+      {
+        ...classListData,
+        subjects: [id, ...classListData.subjects],
+      },
+    ];
+
+    console.log(newSubjectData);
+
+    setSubjectList([...subjectList, newSubjectData]);
+    setClassList(updatedClassList);
   }
 
   console.log(classData);
@@ -171,9 +263,11 @@ function App() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              {dashboardOpen && 'Dashboard'}
-              {studentsListOpen && 'Students List'}
-              {openClasses && 'Classes List'}
+              {activeTab.dashboard && 'Dashboard'}
+              {activeTab.students && 'Students List'}
+              {activeTab.subjects && 'Subjects List'}
+              {activeTab.attendance && 'Attendance'}
+              {activeTab.grade_book && 'Grade Book'}
             </Typography>
             <IconButton color='inherit'>
               <Badge badgeContent={4} color='secondary'>
@@ -198,34 +292,46 @@ function App() {
           </Toolbar>
           <Divider />
           <List component='nav'>
-            <ListItemButton selected={dashboardOpen} onClick={openDashBoard}>
+            <ListItemButton
+              selected={activeTab.dashboard}
+              onClick={openDashBoardTab}
+            >
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
               <ListItemText primary='Dashboard' />
             </ListItemButton>
             <ListItemButton
-              selected={studentsListOpen}
-              onClick={openStudentList}
+              selected={activeTab.students}
+              onClick={openStudentListTab}
             >
               <ListItemIcon>
                 <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary='Students' />
             </ListItemButton>
-            <ListItemButton selected={openClasses} onClick={openClassesTab}>
+            <ListItemButton
+              selected={activeTab.subjects}
+              onClick={openSubjectsTab}
+            >
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary='Classes' />
+              <ListItemText primary='Subjects' />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton
+              selected={activeTab.grade_book}
+              onClick={openGradeBookTab}
+            >
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
-              <ListItemText primary='Reports' />
+              <ListItemText primary='Grade Book' />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton
+              onClick={openAttendanceTab}
+              selected={activeTab.attendance}
+            >
               <ListItemIcon>
                 <LayersIcon />
               </ListItemIcon>
@@ -233,15 +339,36 @@ function App() {
             </ListItemButton>
           </List>
         </Drawer>
-        {dashboardOpen && <Dashboard />}
-        {studentsListOpen && (
+        {activeTab.dashboard && <Dashboard />}
+        {activeTab.students && (
           <StudentsList
             student_list={studentsList}
             onStudentCreate={handleStudentCreate}
-            class_list={classData}
+            class_list={classList}
           />
         )}
-        {openClasses && <Classes />}
+        {activeTab.subjects && (
+          <Subjects
+            students_list={studentsList}
+            class_list={classList}
+            subject_data={subjectList}
+            onSubjectCreate={handleSubjectCreate}
+          />
+        )}
+        {activeTab.attendance && (
+          <Attendance
+            students_list={studentsList}
+            attendance_data={attendanceList}
+          />
+        )}
+        {activeTab.grade_book && (
+          <GradeBook
+            subjects_list={subjectList}
+            class_list={classList}
+            students_list={studentsList}
+            onGradesUpdate={handleGradeBookUpdate}
+          />
+        )}
       </Box>
     </ThemeProvider>
   );

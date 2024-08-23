@@ -5,11 +5,43 @@
     "last_name": "Doe",
     "gender": "Male",
     "date_of_birth": "2008-05-12",
-    "class_id": 2,
+    "class_id": 1,
     "current_grades": [
       {
         "subject_id": 1,
-        "grade": 85
+        "grade": 23
+      },
+      {
+        "subject_id": 2,
+        "grade": 23
+      },
+      {
+        "subject_id": 3,
+        "grade": 23
+      },
+      {
+        "subject_id": 4,
+        "grade": 23
+      },
+      {
+        "subject_id": 5,
+        "grade": 23
+      },
+      {
+        "subject_id": 6,
+        "grade": 23
+      },
+      {
+        "subject_id": 7,
+        "grade": 23
+      },
+      {
+        "subject_id": 8,
+        "grade": 23
+      },
+      {
+        "subject_id": 9,
+        "grade": 24
       }
     ],
     "attendance_record": ["Present", "Absent", "Late"],
@@ -22,238 +54,8 @@
     "last_name": "Doe",
     "gender": "Male",
     "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 3,
-        "grade": 85
-      },
-      {
-        "subject_id": 2,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 3,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 4,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 5,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 6,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 7,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 8,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 9,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 10,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 11,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 12,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 13,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 14,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
-    "attendance_record": ["Present", "Absent", "Late"],
-    "parent_contact_info": "johnsparent@example.com"
-  },
-
-  {
-    "id": 15,
-    "first_name": "John",
-    "last_name": "Doe",
-    "gender": "Male",
-    "date_of_birth": "2008-05-12",
-    "class_id": 2,
-    "current_grades": [
-      {
-        "subject_id": 1,
-        "grade": 85
-      }
-    ],
+    "class_id": 1,
+    "current_grades": [],
     "attendance_record": ["Present", "Absent", "Late"],
     "parent_contact_info": "johnsparent@example.com"
   }
