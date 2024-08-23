@@ -25,13 +25,21 @@ class Admin(models.Model):
     assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
     # subjects = models.ManyToManyField("Subject",null=True, blank=True,  related_name='teachers')
 
-
+    def __str__(self):
+        return self.name
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
     class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
 
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'teacher'], name='unique_subject_teacher')
+        ]
+
+        
     def __str__(self):
         return self.name
 
