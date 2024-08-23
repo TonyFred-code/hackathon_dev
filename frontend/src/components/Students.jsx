@@ -406,7 +406,7 @@ export default function StudentsList({
             sx={{ mb: 2 }}
             component='h2'
           >
-            Text in a modal
+            Create Student
           </Typography>
           <TextField
             required
@@ -500,7 +500,7 @@ export default function StudentsList({
               sx={{ mb: 2 }}
               component='h2'
             >
-              Text in a modal
+              Edit Student
             </Typography>
             <TextField
               required
