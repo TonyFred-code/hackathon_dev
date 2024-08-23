@@ -178,7 +178,12 @@ function App() {
       parent_contact_info: emailAddress,
       gender,
       class_id: 1,
-      current_grades: [],
+      current_grades: subjectList.map((subject) => {
+        return {
+          subject_id: subject.id,
+          grade: 0,
+        };
+      }),
       date_of_birth,
     };
     const [classListData] = classList;
