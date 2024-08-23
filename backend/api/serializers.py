@@ -1,17 +1,45 @@
 from rest_framework import serializers
-from .models import Student, Attendance, Class, Subject, Grade
+from .models import Student, Attendance, Class, Subject, Grade, Admin
 
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = ['id', 'name']  
-
-class SubjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subject
         fields = ['name']  
 
 
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = ['name']
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+    teacher = AdminSerializer()
+    class_name = ClassSerializer()
+
+    class Meta:
+        model = Subject
+        fields = ['name', 'teacher', 'class_name']  
+
+    def create(self, validated_data):
+        teacher_data = validated_data.pop('teacher')
+        class_name_data = validated_data.pop('class_name')
+
+        # Look up the teacher by the provided name
+        try:
+            teacher = Admin.objects.get(name=teacher_data['name'])
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError({"teacher": "Teacher does not exist."})
+
+        # Look up the class by the provided name
+        try:
+            class_name = Class.objects.get(name=class_name_data['name'])
+        except Class.DoesNotExist:
+            raise serializers.ValidationError({"class_name": "Class does not exist."})
+
+        # Create the Subject with the validated data
+        subject = Subject.objects.create(teacher=teacher, class_name=class_name, **validated_data)
+        return subject
 
 class GradeSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()  # Nested SubjectSerializer to include subject details
@@ -19,9 +47,6 @@ class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grade
         fields = ['subject', 'value']  
-
-
-
 
 
 
