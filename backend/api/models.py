@@ -1,13 +1,15 @@
 from django.db import models
 
-class Teacher(models.Model):
-    full_name = models.CharField(max_length=300)
-    email = models.EmailField(unique=True)
-    sex = models.CharField(max_length=100)
-    subject = models.CharField(max_length=300)
 
-    def __str__(self):
-        return f"{self.full_name} {self.email}"
+
+# class Teacher(models.Model):
+#     full_name = models.CharField(max_length=300)
+#     email = models.EmailField(unique=True)
+#     sex = models.CharField(max_length=100)
+#     subject = models.CharField(max_length=300)
+
+#     def __str__(self):
+#         return f"{self.full_name} {self.email}"
 
 class Class(models.Model):
     name = models.CharField(max_length=200)
@@ -16,13 +18,28 @@ class Class(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+class Admin(models.Model):
+    name = models.CharField(max_length=200)
+    is_class_teacher = models.BooleanField(default=False)
+    assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
+    # subjects = models.ManyToManyField("Subject",null=True, blank=True,  related_name='teachers')
 
+    def __str__(self):
+        return self.name
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
-    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True, related_name='student_subject')
+    teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
     class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
 
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'teacher'], name='unique_subject_teacher')
+        ]
+
+        
     def __str__(self):
         return self.name
 
@@ -38,9 +55,9 @@ class Student(models.Model):
     email = models.EmailField(blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     date_of_birth = models.DateField()
+    parent_contact_info= models.EmailField(null=True)
     class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_class')
     subjects = models.ManyToManyField('Subject', through='Grade')
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -51,7 +68,7 @@ class Student(models.Model):
 
 
 class Grade(models.Model):
-    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='grades')  # Added related_name
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='current_grades')  # Added related_name
     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
     value = models.PositiveIntegerField()
 

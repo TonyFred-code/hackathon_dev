@@ -1,71 +1,127 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Attendance, Class, Subject, Grade
+from .models import Student, Attendance, Class, Subject, Grade, Admin
 
-class ClassSerializer(serializers.ModelSerializer):
+# Admin Serializer
+class AdminSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Class
-        fields = ['id', 'name']  
+        model = Admin
+        fields = ['name']
 
+# Subject Serializer
 class SubjectSerializer(serializers.ModelSerializer):
+    teacher = AdminSerializer()
+    class_name = serializers.StringRelatedField()  # Display class name as string
+
     class Meta:
         model = Subject
-        fields = ['name']  
+        fields = ['name', 'teacher', 'class_name']
 
+    def create(self, validated_data):
+        teacher_data = validated_data.pop('teacher')
+        class_name_data = validated_data.pop('class_name')
+
+        # Look up the teacher by the provided name
+        try:
+            teacher = Admin.objects.get(name=teacher_data['name'])
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError({"teacher": "Teacher does not exist."})
+
+        # Look up the class by the provided name
+        try:
+            class_name = Class.objects.get(name=class_name_data)
+        except Class.DoesNotExist:
+            raise serializers.ValidationError({"class_name": "Class does not exist."})
+
+        # Create the Subject with the validated data
+        subject = Subject.objects.create(teacher=teacher, class_name=class_name, **validated_data)
+        return subject
+
+# Grade Serializer
 class GradeSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()  # Nested SubjectSerializer to include subject details
 
     class Meta:
         model = Grade
-        fields = ['subject', 'value']  
+        fields = ['subject', 'value']
 
-
-
-
-
-
-
-
+# Student Serializer
 class StudentSerializer(serializers.ModelSerializer):
-    class_id = ClassSerializer()  
-    
-    grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
+    class_id = serializers.StringRelatedField()  # Display class name as string
+    current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
 
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'date_of_birth', 'class_id', 'grades']  # Include fields for serialization
+        fields = ['id', 'first_name', 'last_name', 'email', 'gender', 'date_of_birth', 'class_id', 'current_grades', 'parent_contact_info']
 
     def update(self, instance, validated_data):
-        print('validated_data = ', validated_data)
         # Update class_id (Class model)
         class_data = validated_data.pop('class_id', None)
         if class_data:
-            class_instance = instance.class_id
-            print('class_instace = ', class_instance)
-            print('class_instace name = ', class_instance.id)
-
-            class_instance.name = class_data.get('name', class_instance.name)
-            class_instance.save()
+            class_instance = Class.objects.get(name=class_data)
+            instance.class_id = class_instance
 
         # Update grades (Grade model)
-        grades_data = validated_data.pop('grades', [])
+        grades_data = validated_data.pop('current_grades', [])
         for grade_data in grades_data:
-            grade_instance = instance.grades.get(subject__name=grade_data['subject']['name'])
+            subject_name = grade_data['subject']['name']
+            subject_instance = Subject.objects.get(name=subject_name)
+            grade_instance = instance.current_grades.get(subject=subject_instance)
             grade_instance.value = grade_data.get('value', grade_instance.value)
             grade_instance.save()
 
         # Update other Student fields
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.email = validated_data.get('email', instance.email)
-        instance.gender = validated_data.get('gender', instance.gender)
-        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
 
         return instance
 
+# Class Serializer with Nested Serializers
+class ClassSerializer(serializers.ModelSerializer):
+    students = StudentSerializer(many=True, read_only=True, source='student_class')
+    subjects = SubjectSerializer(many=True, read_only=True)
 
-
-class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Teacher
-        fields = '__all__'  
+        model = Class
+        fields = ['id', 'name', 'students', 'subjects']
+
+    def create(self, validated_data):
+        students_data = self.initial_data.get('students', [])
+        subjects_data = self.initial_data.get('subjects', [])
+
+        class_instance = Class.objects.create(**validated_data)
+
+        # Handle nested student creation
+        for student_data in students_data:
+            student_data['class_id'] = class_instance
+            Student.objects.create(**student_data)
+
+        # Handle nested subject creation
+        for subject_data in subjects_data:
+            subject_data['class_name'] = class_instance
+            Subject.objects.create(**subject_data)
+
+        return class_instance
+
+    def update(self, instance, validated_data):
+        # Update basic fields
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+
+        # For the `students` and `subjects`, manage them separately.
+        students_data = self.initial_data.get('students', [])
+        subjects_data = self.initial_data.get('subjects', [])
+
+        # Handle updating students
+        for student_data in students_data:
+            student_instance = Student.objects.get(id=student_data['id'])
+            student_instance.class_id = instance
+            student_instance.save()
+
+        # Handle updating subjects
+        for subject_data in subjects_data:
+            subject_instance = Subject.objects.get(id=subject_data['id'])
+            subject_instance.class_name = instance
+            subject_instance.save()
+
+        return instance
