@@ -28,13 +28,13 @@ class Class(models.Model):
 #     def __str__(self):
 #         return self.name
 
-# class Subject(models.Model):
-#     name = models.CharField(max_length=100)
-#     # teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
-#     class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    # teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
+    class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='classes')  # Changed related_name
 
 
-#     # class Meta:
+#     # class M`eta:
 #     #     constraints = [
 #     #         models.UniqueConstraint(fields=['name', 'teacher'], name='unique_subject_teacher')
 #     #     ]
