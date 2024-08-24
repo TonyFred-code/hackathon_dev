@@ -11,13 +11,13 @@ from django.db import models
 #     def __str__(self):
 #         return f"{self.full_name} {self.email}"
 
-# class Class(models.Model):
-#     name = models.CharField(max_length=200)
-#     students = models.ManyToManyField('Student', blank=True, related_name='classes')  # Changed related_name
-#     # subjects = models.ManyToManyField('Subject', blank=True, related_name='classes')  # Changed related_name
+class Class(models.Model):
+    name = models.CharField(max_length=200)
+    # students = models.ManyToManyField('Student', blank=True, related_name='classes')  # Changed related_name
+    # subjects = models.ManyToManyField('Subject', blank=True, related_name='classes')  # Changed related_name
 
-#     def __str__(self):
-#         return f"{self.name}"
+    def __str__(self):
+        return f"{self.name}"
     
 # class Admin(models.Model):
 #     name = models.CharField(max_length=200)
@@ -56,7 +56,8 @@ class Student(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     date_of_birth = models.DateField()
     parent_contact_info= models.EmailField(null=True)
-#     # class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_class')
+    class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True,
+                                 related_name='students')
 #     # subjects = models.ManyToManyField('Subject', through='Grade')
 #     # attendance = models.OneToOneField("Attendance",null=True, blank=True, related_name='student_attendance', on_delete=models.SET_NULL)
     
