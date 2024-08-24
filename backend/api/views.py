@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .models import  Student
+from .models import  Student, Class
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
-from .serializers import StudentSerializer
+from .serializers import StudentSerializer, ClassSerializer
 # , AttendanceSerializer,AdminSerializer, SubjectSerializer, ClassSerializer
 # 
 @api_view(['GET', 'POST'])
@@ -69,19 +69,19 @@ def student_id(request, id):
 #             return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @api_view(['GET', 'POST'])
-# def class_list(request):
-#     if request.method == 'GET':
-#         classes = Class.objects.all()
-#         serializer = ClassSerializer(classes, many=True)
-#         return Response(serializer.data)
+@api_view(['GET', 'POST'])
+def class_list(request):
+    if request.method == 'GET':
+        classes = Class.objects.all()
+        serializer = ClassSerializer(classes, many=True)
+        return Response(serializer.data)
 
-#     elif request.method == 'POST':
-#         serializer = ClassSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'POST':
+        serializer = ClassSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def class_detail(request, pk):
