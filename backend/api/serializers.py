@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student
+from .models import Student, Class
 # # Admin Serializer
 # class AdminSerializer(serializers.ModelSerializer):
 #     assigned_class = serializers.StringRelatedField()
@@ -54,12 +54,14 @@ from .models import Student
 
 # Student Serializer
 class StudentSerializer(serializers.ModelSerializer):
+    class_id = serializers.StringRelatedField()
     # class_id = serializers.StringRelatedField()  # Display class name as string
     # current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
     # attendance = AttendanceSerializer()
+
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email',
+        fields = ['id', 'first_name', 'last_name', 'email', 'class_id',
                    'gender', 'date_of_birth', 'parent_contact_info']
 
     # def update(self, instance, validated_data):
@@ -90,51 +92,52 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 # # Class Serializer with Nested Serializers
-# class ClassSerializer(serializers.ModelSerializer):
-#     students = StudentSerializer(many=True, read_only=True, source='student_class')
-#     # subjects = SubjectSerializer(many=True, read_only=True)
+class ClassSerializer(serializers.ModelSerializer):
+    # students = StudentSerializer(many=True, read_only=True)
+    students = serializers.StringRelatedField(many=True)
+    # subjects = SubjectSerializer(many=True, read_only=True)
 
-#     class Meta:
-#         model = Class
-#         fields = ['id', 'name', 'students']
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'students']
 
-#     def create(self, validated_data):
-#         students_data = self.initial_data.get('students', [])
-#         subjects_data = self.initial_data.get('subjects', [])
+    # def create(self, validated_data):
+    #     students_data = self.initial_data.get('students', [])
+    #     subjects_data = self.initial_data.get('subjects', [])
 
-#         class_instance = Class.objects.create(**validated_data)
+    #     class_instance = Class.objects.create(**validated_data)
 
-#         # Handle nested student creation
-#         for student_data in students_data:
-#             student_data['class_id'] = class_instance
-#             Student.objects.create(**student_data)
+    #     # Handle nested student creation
+    #     for student_data in students_data:
+    #         student_data['class_id'] = class_instance
+    #         Student.objects.create(**student_data)
 
-#         # Handle nested subject creation
-#         for subject_data in subjects_data:
-#             subject_data['class_name'] = class_instance
-#             Subject.objects.create(**subject_data)
+    #     # Handle nested subject creation
+    #     for subject_data in subjects_data:
+    #         subject_data['class_name'] = class_instance
+    #         Subject.objects.create(**subject_data)
 
-#         return class_instance
+    #     return class_instance
 
-#     def update(self, instance, validated_data):
-#         # Update basic fields
-#         instance.name = validated_data.get('name', instance.name)
-#         instance.save()
+    # def update(self, instance, validated_data):
+    #     # Update basic fields
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.save()
 
-#         # For the `students` and `subjects`, manage them separately.
-#         students_data = self.initial_data.get('students', [])
-#         subjects_data = self.initial_data.get('subjects', [])
+    #     # For the `students` and `subjects`, manage them separately.
+    #     students_data = self.initial_data.get('students', [])
+    #     subjects_data = self.initial_data.get('subjects', [])
 
-#         # Handle updating students
-#         for student_data in students_data:
-#             student_instance = Student.objects.get(id=student_data['id'])
-#             student_instance.class_id = instance
-#             student_instance.save()
+    #     # Handle updating students
+    #     for student_data in students_data:
+    #         student_instance = Student.objects.get(id=student_data['id'])
+    #         student_instance.class_id = instance
+    #         student_instance.save()
 
-#         # Handle updating subjects
-#         for subject_data in subjects_data:
-#             subject_instance = Subject.objects.get(id=subject_data['id'])
-#             subject_instance.class_name = instance
-#             subject_instance.save()
+    #     # Handle updating subjects
+    #     for subject_data in subjects_data:
+    #         subject_instance = Subject.objects.get(id=subject_data['id'])
+    #         subject_instance.class_name = instance
+    #         subject_instance.save()
 
-#         return instance
+    #     return instance
