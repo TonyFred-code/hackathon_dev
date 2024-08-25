@@ -55,14 +55,15 @@ from .models import Student, Class
 # Student Serializer
 class StudentSerializer(serializers.ModelSerializer):
     class_id = serializers.StringRelatedField()
+    subjects = serializers.StringRelatedField(many=True)
     # class_id = serializers.StringRelatedField()  # Display class name as string
     # current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
     # attendance = AttendanceSerializer()
 
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'email', 'class_id',
-                   'gender', 'date_of_birth', 'parent_contact_info']
+        fields = ['id', 'first_name', 'last_name','gender', 
+                  'date_of_birth', 'email', 'class_id','subjects', 'parent_contact_info']
 
     # def update(self, instance, validated_data):
     #     # Update class_id (Class model)
