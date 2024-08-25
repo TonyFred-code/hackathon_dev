@@ -31,7 +31,7 @@ class Class(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     # teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
-    class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='classes')  # Changed related_name
+    class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='subjects')  # Changed related_name
 
 
 #     # class M`eta:
@@ -40,8 +40,8 @@ class Subject(models.Model):
 #     #     ]
 
         
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 
 
 class Student(models.Model):
@@ -58,7 +58,7 @@ class Student(models.Model):
     parent_contact_info= models.EmailField(null=True)
     class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True,
                                  related_name='students')
-#     # subjects = models.ManyToManyField('Subject', through='Grade')
+    subjects = models.ManyToManyField('Subject', related_name='subjects')
 #     # attendance = models.OneToOneField("Attendance",null=True, blank=True, related_name='student_attendance', on_delete=models.SET_NULL)
     
     def __str__(self):
