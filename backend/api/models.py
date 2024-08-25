@@ -31,13 +31,13 @@ class Class(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     # teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
-    class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='subjects')  # Changed related_name
+    assigned_class = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='subjects')  # Changed related_name
 
 
-#     # class M`eta:
-#     #     constraints = [
-#     #         models.UniqueConstraint(fields=['name', 'teacher'], name='unique_subject_teacher')
-#     #     ]
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'assigned_class'], name='unique_subject_in_class')
+        ]
 
         
     def __str__(self):
