@@ -95,11 +95,13 @@ class StudentSerializer(serializers.ModelSerializer):
 class ClassSerializer(serializers.ModelSerializer):
     # students = StudentSerializer(many=True, read_only=True)
     students = serializers.StringRelatedField(many=True)
-    # subjects = SubjectSerializer(many=True, read_only=True)
+    subjects = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Class
-        fields = ['id', 'name', 'students']
+        fields = ['id', 'name', 'students', 'subjects']
+
+    
 
     # def create(self, validated_data):
     #     students_data = self.initial_data.get('students', [])
