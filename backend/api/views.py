@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .models import  Student, Class
+from .models import  Student, Class, Subject
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
-from .serializers import StudentSerializer, ClassSerializer
+from .serializers import StudentSerializer, ClassSerializer, SubjectSerializer
 # , AttendanceSerializer,AdminSerializer, SubjectSerializer, ClassSerializer
 # 
 @api_view(['GET', 'POST'])
@@ -49,24 +49,23 @@ def student_id(request, id):
     #         return Response(serializer.data, status=status.HTTP_200_OK)
     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['GET', 'POST'])
-# def subject_list(request):
-#     pass
-#     subjects = Subject.objects.all()
+@api_view(['GET', 'POST'])
+def subject_list(request):
     
+    subjects = Subject.objects.all()
 
-#     if request.method == 'GET':
-#         serializer = SubjectSerializer(subjects, many=True)
-#         return Response({'success': serializer.data}, status=status.HTTP_200_OK)
+    if request.method == 'GET':
+        serializer = SubjectSerializer(subjects, many=True)
+        return Response({'subjects': serializer.data}, status=status.HTTP_200_OK)
     
-#     elif request.method == 'POST':
-#             serializer =SubjectSerializer( data=request.data)
+    elif request.method == 'POST':
+            serializer =SubjectSerializer( data=request.data)
 
-#             if serializer.is_valid():
-#                 serializer.save()
-#                 return Response({'success': serializer.data}, status=status.HTTP_200_OK)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'success': serializer.data}, status=status.HTTP_200_OK)
             
-#             return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])

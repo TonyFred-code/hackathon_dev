@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Class
+from .models import Student, Class, Subject
 # # Admin Serializer
 # class AdminSerializer(serializers.ModelSerializer):
 #     assigned_class = serializers.StringRelatedField()
@@ -9,33 +9,33 @@ from .models import Student, Class
 
 
 # # Subject Serializer
-# class SubjectSerializer(serializers.ModelSerializer):
-#     teacher = AdminSerializer()
-#     class_name = serializers.StringRelatedField()  # Display class name as string
+class SubjectSerializer(serializers.ModelSerializer):
+    # teacher = AdminSerializer()
+    assigned_class = serializers.StringRelatedField()  # Display class name as string
 
-#     class Meta:
-#         model = Subject
-#         fields = ['name', 'teacher', 'class_name']
+    class Meta:
+        model = Subject
+        fields = ['name', 'assigned_class']
 
-#     def create(self, validated_data):
-#         teacher_data = validated_data.pop('teacher')
-#         class_name_data = validated_data.pop('class_name')
+    # def create(self, validated_data):
+    #     teacher_data = validated_data.pop('teacher')
+    #     class_name_data = validated_data.pop('class_name')
 
-#         # Look up the teacher by the provided name
-#         try:
-#             teacher = Admin.objects.get(name=teacher_data['name'])
-#         except Admin.DoesNotExist:
-#             raise serializers.ValidationError({"teacher": "Teacher does not exist."})
+    #     # Look up the teacher by the provided name
+    #     try:
+    #         teacher = Admin.objects.get(name=teacher_data['name'])
+    #     except Admin.DoesNotExist:
+    #         raise serializers.ValidationError({"teacher": "Teacher does not exist."})
 
-#         # Look up the class by the provided name
-#         try:
-#             class_name = Class.objects.get(name=class_name_data)
-#         except Class.DoesNotExist:
-#             raise serializers.ValidationError({"class_name": "Class does not exist."})
+    #     # Look up the class by the provided name
+    #     try:
+    #         class_name = Class.objects.get(name=class_name_data)
+    #     except Class.DoesNotExist:
+    #         raise serializers.ValidationError({"class_name": "Class does not exist."})
 
-#         # Create the Subject with the validated data
-#         subject = Subject.objects.create(teacher=teacher, class_name=class_name, **validated_data)
-#         return subject
+    #     # Create the Subject with the validated data
+    #     subject = Subject.objects.create(teacher=teacher, class_name=class_name, **validated_data)
+    #     return subject
 
 # Grade Serializer
 # class GradeSerializer(serializers.ModelSerializer):
@@ -55,7 +55,7 @@ from .models import Student, Class
 # Student Serializer
 class StudentSerializer(serializers.ModelSerializer):
     class_id = serializers.StringRelatedField()
-    subjects = serializers.StringRelatedField(many=True)
+    subjects = SubjectSerializer(many=True)
     # class_id = serializers.StringRelatedField()  # Display class name as string
     # current_grades = GradeSerializer(many=True)  # Use GradeSerializer to include grades with subject details
     # attendance = AttendanceSerializer()
@@ -65,6 +65,22 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name','gender', 
                   'date_of_birth', 'email', 'class_id','subjects', 'parent_contact_info']
 
+    def create(self, validated_data):
+        print('this is the validated data -> ', validated_data)
+        subject_data =  validated_data.pop('subjects') #remove subjects from the list
+        student = Student.objects.create(**validated_data) #create with rest of validated data
+        
+        for subject_data in subject_data:
+
+            #check if query exist
+            subject, created = Subject.objects.get_or_create(**subject_data)
+            print('tis is the subject - ', subject)
+            student.subjects.add(subject)
+
+        return student
+        
+
+    
     # def update(self, instance, validated_data):
     #     # Update class_id (Class model)
     #     class_data = validated_data.pop('class_id', None)
