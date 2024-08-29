@@ -13,30 +13,30 @@ from django.db import models
 
 class Class(models.Model):
     name = models.CharField(max_length=200)
-    students = models.ManyToManyField('Student', blank=True, related_name='classes')  # Changed related_name
-    subjects = models.ManyToManyField('Subject', blank=True, related_name='classes')  # Changed related_name
+    # students = models.ManyToManyField('Student', blank=True, related_name='classes')  # Changed related_name
+    # subjects = models.ManyToManyField('Subject', blank=True, related_name='classes')  # Changed related_name
 
     def __str__(self):
         return f"{self.name}"
     
-class Admin(models.Model):
-    name = models.CharField(max_length=200)
-    is_class_teacher = models.BooleanField(default=False)
-    assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
-    # subjects = models.ManyToManyField("Subject",null=True, blank=True,  related_name='teachers')
+# class Admin(models.Model):
+#     name = models.CharField(max_length=200)
+#     is_class_teacher = models.BooleanField(default=False)
+#     assigned_class = models.OneToOneField('Class', on_delete=models.SET_NULL, null=True, blank=True)
+#     subjects = models.ManyToManyField("Subject",null=True, blank=True,  related_name='teachers')
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
-    teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
-    class_name = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_subject')  # Changed related_name
+    # teacher = models.ForeignKey('Admin', on_delete=models.SET_NULL, blank=True, null=True, related_name='subject_teacher')
+    assigned_class = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='subjects')  # Changed related_name
 
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['name', 'teacher'], name='unique_subject_teacher')
+            models.UniqueConstraint(fields=['name', 'assigned_class'], name='unique_subject_in_class')
         ]
 
         
@@ -56,8 +56,11 @@ class Student(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     date_of_birth = models.DateField()
     parent_contact_info= models.EmailField(null=True)
-    class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True, related_name='student_class')
-    subjects = models.ManyToManyField('Subject', through='Grade')
+    class_id = models.ForeignKey('Class', on_delete=models.CASCADE, null=True, blank=True,
+                                 related_name='students')
+    subjects = models.ManyToManyField('Subject', related_name='subjects')
+#     # attendance = models.OneToOneField("Attendance",null=True, blank=True, related_name='student_attendance', on_delete=models.SET_NULL)
+    
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -67,23 +70,23 @@ class Student(models.Model):
     #     return self.grades.all().values('subject__name', 'grade')
 
 
-class Grade(models.Model):
-    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='current_grades')  # Added related_name
-    subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
-    value = models.PositiveIntegerField()
+# class Grade(models.Model):
+#     student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='current_grades')  # Added related_name
+#     subject = models.ForeignKey('Subject', on_delete=models.CASCADE)
+#     value = models.PositiveIntegerField()
 
-    def __str__(self):
-        return f"{self.student} - {self.subject}: {self.value}"
+#     def __str__(self):
+#         return f"{self.student} - {self.subject}: {self.value}"
 
-class Attendance(models.Model):
-    STATUS_CHOICES = [
-        ('P', 'Present'),
-        ('A', 'Absent'),
-        ('L', 'Late'),
-    ]
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances', null=True)
-    date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+# class Attendance(models.Model):
+#     STATUS_CHOICES = [
+#         ('P', 'Present'),
+#         ('A', 'Absent'),
+#         ('L', 'Late'),
+#     ]
+#     student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='attendances', null=True)
+#     date = models.DateField()
+#     status = models.CharField(max_length=10)
 
-    def __str__(self):
-        return f"{self.student.first_name} - {self.date}"
+#     def __str__(self):
+#         return f"{self.student.first_name} - {self.date}"

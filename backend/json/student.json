@@ -1,0 +1,20 @@
+[
+    {
+      "id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
+      "gender": "Male",
+      "date_of_birth": "2008-05-12",
+      "class_id": 1,
+      "current_grades": [
+        {
+          "subject_id": 1,
+          "grade": 85
+        }
+      ],
+      "attendance_record": ["Present", "Absent", "Late"],
+      "parent_contact_info": "johnsparent@example.com"
+    }
+
+  ]
+  
